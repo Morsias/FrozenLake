@@ -53,6 +53,7 @@ if __name__ == '__main__':
             episode_reward += reward
         results.append(episode_reward)
 
-    results_df = pd.DataFrame(results, columns=["EpisodeReward"])
+
     if args.save_results:
+        results_df = pd.DataFrame(results, columns=["EpisodeReward"])
         results_df.to_csv("results/inference_results.csv")

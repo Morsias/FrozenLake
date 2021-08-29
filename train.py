@@ -50,7 +50,8 @@ if __name__ == '__main__':
 
         print("--- The training took %s seconds ---" % (time.time() - start_time))
 
-    results_df = pd.DataFrame(mean_reward_results, columns=["EpisodeReward"])
+
     if args.save_results:
-        results_df.to_csv("results/inference_results.csv")
+        results_df = pd.DataFrame(mean_reward_results, columns=["MeanEpisodeReward"])
+        results_df.to_csv("results/training_results.csv")
     ray.shutdown()
