@@ -22,9 +22,11 @@ def test_model(checkpoint_path: str, episodes: int, save_results: bool):
     exp_time = "{:%Y_%m_%d_%H_%M_%S}".format(datetime.now())
     ray.init()
     if "PPO" in checkpoint_path:
+        method = "PPO"
         config = ppo.DEFAULT_CONFIG.copy()
         agent = ppo.PPOTrainer(config=config, env="FrozenLake8x8-v1")
     elif "DQN" in checkpoint_path:
+        method = "DQN"
         config = dqn.DEFAULT_CONFIG.copy()
         agent = dqn.DQNTrainer(config=config, env="FrozenLake8x8-v1")
     else:
@@ -51,7 +53,7 @@ def test_model(checkpoint_path: str, episodes: int, save_results: bool):
 
     if save_results:
         results_df = pd.DataFrame(results, columns=["EpisodeReward"])
-        results_df.to_csv("results/inference_results_%s.csv" % exp_time)
+        results_df.to_csv("results/inference_results_%s_%s.csv" % (method, exp_time))
 
 
 parser = argparse.ArgumentParser()

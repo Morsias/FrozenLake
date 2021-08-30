@@ -32,7 +32,10 @@ def train_agent(iterations: int, save_results: bool, method: str):
         config = dqn.DEFAULT_CONFIG.copy()
         config["num_workers"] = 3
         config['num_envs_per_worker'] = 8
+        # This is done to have "comparable" iterations between PPO and DQN
         config['timesteps_per_iteration'] = 4000
+        # TODO why
+        config['exploration_config']['epsilon_timesteps'] = 800000
         trainer = dqn.DQNTrainer(config=config, env="FrozenLake8x8-v1")
     else:
         raise Exception("The method provided is not supported please choose PPO or DQN")
@@ -44,6 +47,7 @@ def train_agent(iterations: int, save_results: bool, method: str):
     for i in range(iterations):
         # Perform one iteration of training the policy
         result = trainer.train()
+        print("iteration: %s" % i)
         print("episode_reward_max: %s" % (result['episode_reward_max']))
         print("episode_reward_mean: %s" % (result['episode_reward_mean']))
         print("episodes_this_iter:%s" % (result['episodes_this_iter']))
@@ -59,9 +63,14 @@ def train_agent(iterations: int, save_results: bool, method: str):
 
     if save_results:
         results_df = pd.DataFrame(mean_reward_results, columns=["MeanEpisodeReward"])
-        results_df.to_csv("results/training_results_%s.csv" % exp_time)
+        results_df.to_csv("results/training_results_%s_%s.csv" % (method, exp_time))
 
+    checkpoint = trainer.save(
+        checkpoint_dir="models/%s_%s" % (method, exp_time))
+
+    print("Final checkpoint saved at", checkpoint)
     print("Total training time: %s secs" % result['time_total_s'])
+
 
 
 parser = argparse.ArgumentParser()
@@ -73,7 +82,7 @@ parser.add_argument(
 parser.add_argument(
     "--iters",
     type=int,
-    default=5,
+    default=200,
     help="Number of iterations to train.")
 parser.add_argument(
     "--save-results",
