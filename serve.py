@@ -10,6 +10,7 @@ from ray import serve
 @serve.deployment(route_prefix="/frozenlake-ppo")
 class ServePPOModel:
     def __init__(self, checkpoint_path) -> None:
+        # Initialize trainer and restore model
         self.trainer = ppo.PPOTrainer(
             config={
                 "framework": "tf",
@@ -20,6 +21,7 @@ class ServePPOModel:
         self.trainer.restore(checkpoint_path)
 
     async def __call__(self, request: Request):
+        # Get request compute optimal action and return in json form
         json_input = await request.json()
         obs = json_input["observation"]
 
@@ -29,15 +31,16 @@ class ServePPOModel:
 
 
 if __name__ == '__main__':
-    # TODO comments
-    CHECKPOINT_PATH = "models/PPO_FrozenLake8x8-v1_2021-08-29_12-44-17hwu4pe41/checkpoint_000210/checkpoint-210"
+    # Setup server
+    CHECKPOINT_PATH = "models/PPO_2021_08_31_09_37_06/checkpoint_000200/checkpoint-200"
     serve.start()
     ServePPOModel.deploy(CHECKPOINT_PATH)
 
+    # Setup env for inference
     env = gym.make("FrozenLake8x8-v1")
     observation = env.reset()
     for _ in range(50):
-
+        # Send observation to API
         print(f"-> Sending observation {observation}")
         resp = requests.get(
             "http://localhost:8000/frozenlake-ppo",
