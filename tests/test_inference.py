@@ -2,7 +2,7 @@ import unittest
 import ray
 import gym
 
-from inference_model import inference_model
+from inference import inference_model
 
 
 class TestAgentInference(unittest.TestCase):

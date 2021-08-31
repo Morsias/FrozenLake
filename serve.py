@@ -1,8 +1,6 @@
 import gym
 from starlette.requests import Request
 import requests
-
-import ray
 import ray.rllib.agents.ppo as ppo
 from ray import serve
 
@@ -39,7 +37,7 @@ if __name__ == '__main__':
     # Setup env for inference
     env = gym.make("FrozenLake8x8-v1")
     observation = env.reset()
-    for _ in range(50):
+    for _ in range(30):
         # Send observation to API
         print(f"-> Sending observation {observation}")
         resp = requests.get(
