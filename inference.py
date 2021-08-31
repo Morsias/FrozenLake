@@ -5,7 +5,7 @@ import ray.rllib.agents.dqn as dqn
 import gym
 import pandas as pd
 from datetime import datetime
-import logging
+
 
 
 def inference_model(checkpoint_path: str, episodes: int, save_results: bool = True, render: bool = False):
@@ -50,14 +50,14 @@ def inference_model(checkpoint_path: str, episodes: int, save_results: bool = Tr
             action = agent.compute_single_action(observation, explore=False)
             observation, reward, done, info = env.step(action)
             episode_reward += reward
-        logging.info('Episode %s reward: %s' % (i, episode_reward))
+        print('Episode %s reward: %s' % (i, episode_reward))
         results.append(episode_reward)
 
     if save_results:
         results_df = pd.DataFrame(results, columns=["EpisodeReward"])
         result_path = "results/inference_results_%s_%s.csv" % (method, exp_time)
         results_df.to_csv(result_path)
-        logging.info('Results were saved at: %s' % result_path)
+        print('Results were saved at: %s' % result_path)
 
     return agent
 
@@ -77,16 +77,18 @@ parser.add_argument(
     help="Number of episodes of inference")
 parser.add_argument(
     "--render",
-    type=bool,
     default=False,
+    action='store_true',
     help="Render environment during inference")
 parser.add_argument(
     "--save-results",
-    type=bool,
-    default=True,
+    default=False,
+    action='store_true',
     help="Save the episode reward")
 
 if __name__ == '__main__':
-    args = parser.parse_args()
-    agent = inference_model(args.checkpoint_path, args.episodes, args.save_results, args.render)
+    # args = parser.parse_args()
+    args, unknown = parser.parse_known_args()
+    print(args)
+    agent = inference_model(checkpoint_path=args.checkpoint_path, episodes=args.episodes, save_results=args.save_results, render=args.render)
     ray.shutdown()
