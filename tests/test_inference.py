@@ -1,6 +1,7 @@
 import unittest
 import ray
 import gym
+from os.path import dirname, abspath
 
 from inference import inference_model
 
@@ -22,7 +23,7 @@ class TestAgentInference(unittest.TestCase):
     def test_agent_inference(self):
         self.assertRaises(Exception, inference_model, "wrong_string", 5, False)
         ray.shutdown()
-        model_path = "models/PPO_2021_08_31_09_37_06/checkpoint_000200/checkpoint-200"
+        model_path = dirname(dirname(abspath(__file__))) + "/models/PPO_2021_08_31_09_37_06/checkpoint_000200/checkpoint-200"
         agent = inference_model(checkpoint_path=model_path, episodes=5, save_results=False, render=False)
 
         action = agent.compute_single_action(0, explore=False)
