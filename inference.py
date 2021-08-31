@@ -87,8 +87,6 @@ parser.add_argument(
     help="Save the episode reward")
 
 if __name__ == '__main__':
-    # args = parser.parse_args()
-    args, unknown = parser.parse_known_args()
-    print(args)
+    args = parser.parse_args()
     agent = inference_model(checkpoint_path=args.checkpoint_path, episodes=args.episodes, save_results=args.save_results, render=args.render)
     ray.shutdown()
