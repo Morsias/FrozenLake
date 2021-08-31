@@ -4,6 +4,7 @@ import ray.rllib.agents.ppo as ppo
 import ray.rllib.agents.dqn as dqn
 from datetime import datetime
 import pandas as pd
+import logging
 
 
 def train_agent(iterations: int, save_results: bool, method: str):
@@ -48,29 +49,33 @@ def train_agent(iterations: int, save_results: bool, method: str):
     for i in range(iterations):
         # Perform one iteration of training the policy
         result = trainer.train()
-        print("iteration: %s" % i)
-        print("episode_reward_max: %s" % (result['episode_reward_max']))
-        print("episode_reward_mean: %s" % (result['episode_reward_mean']))
-        print("episodes_this_iter:%s" % (result['episodes_this_iter']))
-        print("time_this_iter_s: %s" % (result['time_this_iter_s']))
+        logging.info("iteration: %s" % i)
+        logging.info("episode_reward_max: %s" % (result['episode_reward_max']))
+        logging.info("episode_reward_mean: %s" % (result['episode_reward_mean']))
+        logging.info("episodes_this_iter:%s" % (result['episodes_this_iter']))
+        logging.info("time_this_iter_s: %s" % (result['time_this_iter_s']))
         mean_reward_results.append(result['episode_reward_mean'])
 
         # Create a model checkpoint every 50 training iterations
         if i % 50 == 0:
             checkpoint = trainer.save(
                 checkpoint_dir="models/%s_%s" % (method, exp_time))
-            print("checkpoint saved at", checkpoint)
+            logging.info("checkpoint saved at", checkpoint)
 
 
     if save_results:
         results_df = pd.DataFrame(mean_reward_results, columns=["MeanEpisodeReward"])
-        results_df.to_csv("results/training_results_%s_%s.csv" % (method, exp_time))
+        result_path = "results/training_results_%s_%s.csv" % (method, exp_time)
+        results_df.to_csv(result_path)
+        logging.info('Results were saved at: %s' % result_path)
 
     checkpoint = trainer.save(
         checkpoint_dir="models/%s_%s" % (method, exp_time))
 
-    print("Final checkpoint saved at", checkpoint)
-    print("Total training time: %s secs" % result['time_total_s'])
+    logging.info("Final checkpoint saved at", checkpoint)
+    logging.info("Total training time: %s secs" % result['time_total_s'])
+
+    return trainer
 
 
 
@@ -93,5 +98,5 @@ parser.add_argument(
 
 if __name__ == '__main__':
     args = parser.parse_args()
-    train_agent(args.iters, args.save_results, args.method)
-    # ray.shutdown()
+    trainer = train_agent(args.iters, args.save_results, args.method)
+    ray.shutdown()
