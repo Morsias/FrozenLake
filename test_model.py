@@ -60,8 +60,10 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--checkpoint_path",
     type=str,
-    default="models/PPO_FrozenLake8x8-v1_2021-08-29_12-44-17hwu4pe41/checkpoint_000210/checkpoint-210",
+    default="models/PPO_2021_08_31_09_37_06/checkpoint_000200/checkpoint-200",
     help="RL model that will be restored")
+# For DQN use path:
+# models/DQN_2021_08_31_09_29_14/checkpoint_000200/checkpoint-200
 parser.add_argument(
     "--episodes",
     type=int,

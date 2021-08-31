@@ -34,7 +34,8 @@ def train_agent(iterations: int, save_results: bool, method: str):
         config['num_envs_per_worker'] = 8
         # This is done to have "comparable" iterations between PPO and DQN
         config['timesteps_per_iteration'] = 4000
-        # TODO why
+        # The epsilon_timesteps show for how long the epsilon will decay. This was changed from default because it was a
+        # very small value for our particular problem
         config['exploration_config']['epsilon_timesteps'] = 800000
         trainer = dqn.DQNTrainer(config=config, env="FrozenLake8x8-v1")
     else:
