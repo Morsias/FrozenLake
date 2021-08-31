@@ -77,7 +77,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument(
     "--method",
     type=str,
-    default="DQN",
+    default="PPO",
     help="RL Methodology used. Can run with PPO and DQN")
 parser.add_argument(
     "--iters",
