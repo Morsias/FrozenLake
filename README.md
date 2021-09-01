@@ -14,7 +14,6 @@ The packages must be installed in the following order:
 3. ```pip install 'ray[serve]'```
 4. ```pip install jupyter```
 5. ```pip install seaborn```
-6. ```pip install starlette```
 
 
 ### Executing the code
